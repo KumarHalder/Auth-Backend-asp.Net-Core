@@ -31,3 +31,4 @@
 /Users/khalder/Documents/Development/auth/Backend/obj/Debug/net7.0/Backend.pdb
 /Users/khalder/Documents/Development/auth/Backend/obj/Debug/net7.0/Backend.genruntimeconfig.cache
 /Users/khalder/Documents/Development/auth/Backend/obj/Debug/net7.0/ref/Backend.dll
+/Users/khalder/Documents/Development/auth/Backend/bin/Debug/net7.0/System.Security.Permissions.dll
