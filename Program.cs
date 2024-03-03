@@ -14,7 +14,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/api/access-denied"; // Specify your access denied path
     });
 
-// Configure CORS to allow requests from the React app
+// Configure CORS to allow requests from the frontend app
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(build =>

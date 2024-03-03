@@ -15,6 +15,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public IActionResult Login()
     {
+        // Assumption based on user identity exists auth db
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, "example"),

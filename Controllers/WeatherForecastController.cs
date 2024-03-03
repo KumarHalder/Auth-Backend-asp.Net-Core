@@ -22,8 +22,6 @@ public class WeatherForecastController : ControllerBase
     [Authorize]
     public IEnumerable<WeatherForecast> Get()
     {
-        DateTime currentTime = DateTime.Now;
-        _logger.LogInformation("req called ----------" + currentTime);
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
             Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
