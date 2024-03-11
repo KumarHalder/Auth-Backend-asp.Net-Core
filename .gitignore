@@ -1,6 +1,6 @@
 /bin/
 /.idea/
-obj/project.nuget.cache
+/obj/
 obj/rider.project.model.nuget.info
 obj/rider.project.restore.info
 obj/Debug/net7.0/Backend.assets.cache
