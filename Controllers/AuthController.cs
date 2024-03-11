@@ -1,8 +1,6 @@
 using System.Security.Claims;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +25,8 @@ public class AuthController : ControllerBase
         return this.RedirectPermanent("/weatherforecast");
     }
 
-    [HttpGet("/logout")]
-    public async Task Unauthorize()
+    [HttpGet("logout")]
+    public async Task UnAuthorize()
     {
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
@@ -41,7 +39,7 @@ public class AuthController : ControllerBase
         HttpContext.Response.Redirect("/logout-google");
     }
 
-    [HttpGet("/auth/me")]
+    [HttpGet("me")]
     public ActionResult<UserModel> GetUserProfile()
     {
         var user = this.HttpContext.User;
@@ -51,11 +49,8 @@ public class AuthController : ControllerBase
             return this.Ok(new UserModel
             {
                 IsAuthenticated = true,
-                FirstName = user.Claims?.FirstOrDefault(x => x.Type == "given_name")?.Value,
-                LastName = user.Claims?
-                    .FirstOrDefault(x => x.Type == "family_name")?.Value,
-                EmailAddress = user.Claims?
-                    .FirstOrDefault(x => x.Type == "email")?.Value,
+                Name = user.FindFirst("name")?.Value,
+                EmailAddress = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value
             });
         }
 
@@ -64,4 +59,5 @@ public class AuthController : ControllerBase
             IsAuthenticated = false,
         });
     }
+   
 }

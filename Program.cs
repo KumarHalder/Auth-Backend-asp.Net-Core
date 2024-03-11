@@ -1,7 +1,5 @@
-using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,23 +12,14 @@ var configuration = new ConfigurationBuilder()
 
 // Add services to the container.
 builder.Services.AddControllers();
-//builder.Services.AddAccessTokenManagement();
 
-// builder.Services.AddHttpsRedirection(options =>
-// {
-//     options.HttpsPort = 443; // Set your HTTPS port here
-// });
-// Creating authentication builder to build authentication schemes
 var authenticationBuilder = builder.Services.AddAuthentication(options =>
 {
-  // our authention process will used signed cookies
-  options.DefaultScheme = 
-  CookieAuthenticationDefaults.AuthenticationScheme;
+  // our authentication process will used signed cookies
+  options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
   // our authentication challenge is openid
-  options.DefaultChallengeScheme = 
-  OpenIdConnectDefaults.AuthenticationScheme;
+  options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
 });
-
 
 authenticationBuilder
  .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
@@ -61,10 +50,10 @@ authenticationBuilder
     options.Authority = "https://accounts.google.com";
     
     // Who are we? (client id)
-    options.ClientId = "873932430728-rcu128m4ose6sibpivc7r45d4odgfdri.apps.googleusercontent.com";
+    options.ClientId = configuration["Google:ClientId"];
     
     // How does authentication provider know, we are ligit? (secret key)
-    options.ClientSecret = "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";
+    options.ClientSecret = configuration["Google:Secret"];
     
     // What do we intend to receive back?
     // (code to make for consequent requests)
@@ -75,7 +64,7 @@ authenticationBuilder
     options.UsePkce = true;
     
     // Where we would like to get the response after authentication?
-    options.CallbackPath = "/signin-google";
+    options.CallbackPath = configuration["Google:CallbackPath"];
     
     // Should we persist tokens?
     options.SaveTokens = true;
@@ -88,22 +77,14 @@ authenticationBuilder
     options.Scope.Add("email");
     options.Scope.Add("phone");
     options.Scope.Add("profile");
-    
-    // What claims from above scopes do we need?
-    // unblock the required claims by using Remove()
-    // options.ClaimActions.Remove("openid");
-    // options.ClaimActions.Remove("email");
-    // options.ClaimActions.Remove("phone");
-    // options.ClaimActions.Remove("profile");
 
     
     // How to handle OIDC events?
     options.Events = new OpenIdConnectEvents
     {
-        
       OnRedirectToIdentityProviderForSignOut = context =>
       {
-          context.Response.Redirect("/logout-google");
+          context.Response.Redirect(configuration["Google:RedirectOnSignOut"]);
           context.HandleResponse();
 
           return Task.CompletedTask;
@@ -112,18 +93,14 @@ authenticationBuilder
       // Where to redirect when we get authentication errors?
       OnRemoteFailure = context =>
       {
-          
          context.Response.Redirect("/error");
          context.HandleResponse();
          return Task.FromResult(0);
       },
-      
    };
  });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-//builder.Services.AddAuthorization();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Logging.AddConsole();
@@ -140,7 +117,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();  // Enable authentication
-
 app.UseAuthorization();
 
 app.MapControllers();
